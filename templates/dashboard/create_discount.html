@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Create Discount - Dashboard{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="fw-bold mb-4">Create Discount Code</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Code</label>
+                        <input type="text" name="code" class="form-control text-uppercase" placeholder="e.g. SEKANI20" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Discount Type</label>
+                        <select name="discount_type" class="form-select">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed">Fixed Amount (₦)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Value</label>
+                        <input type="number" name="value" class="form-control" step="0.01" placeholder="e.g. 10 for 10% or 500 for ₦500" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Minimum Order Amount (₦)</label>
+                        <input type="number" name="minimum_order_amount" class="form-control" placeholder="0 = no minimum" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Max Uses</label>
+                        <input type="number" name="max_uses" class="form-control" placeholder="0 = unlimited" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Valid Until (optional)</label>
+                        <input type="datetime-local" name="valid_until" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 fw-bold">Create Code</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

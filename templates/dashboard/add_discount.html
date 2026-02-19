@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Add Discount - SEKANI Dashboard{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Create Discount Code</h3>
+<div class="card shadow p-4">
+<div class="col-md-6">
+<form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label fw-bold">Discount Code</label>
+        <input type="text" name="code" class="form-control text-uppercase" placeholder="e.g. SEKANI20" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Discount Type</label>
+        <select name="discount_type" class="form-select">
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Amount (₦)</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Value</label>
+        <input type="number" name="value" class="form-control" step="0.01" placeholder="e.g. 20 for 20% or 500 for ₦500" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Minimum Order Amount (₦)</label>
+        <input type="number" name="minimum_order" class="form-control" value="0">
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Max Uses</label>
+        <input type="number" name="max_uses" class="form-control" value="100">
+    </div>
+    <div class="row">
+        <div class="col mb-3">
+            <label class="form-label fw-bold">Valid From</label>
+            <input type="datetime-local" name="valid_from" class="form-control" required>
+        </div>
+        <div class="col mb-3">
+            <label class="form-label fw-bold">Valid Until</label>
+            <input type="datetime-local" name="valid_to" class="form-control" required>
+        </div>
+    </div>
+    <button class="btn btn-sekani btn-lg">Create Code</button>
+    <a href="{% url 'dashboard_discounts' %}" class="btn btn-outline-secondary btn-lg ms-2">Cancel</a>
+</form>
+</div>
+</div>
+{% endblock %}

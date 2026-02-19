@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}SEKANI Admin Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-md-5">
+<div class="card shadow p-4 border-success">
+    <h3 class="text-center fw-bold mb-1">SEKANI Admin</h3>
+    <p class="text-center text-muted small mb-4">Authorized Personnel Only</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <button class="btn btn-sekani w-100">Login to Dashboard</button>
+        <p class="text-center mt-3 small"><a href="{% url 'login' %}">← Customer Login</a></p>
+    </form>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} - Dashboard{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <h2 class="fw-bold mb-4">Order #{{ order.id }}</h2>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm p-4 mb-3">
+                <h5 class="fw-bold">Items</h5>
+                {% for item in order.items.all %}
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <span>{{ item.product_name }} × {{ item.quantity }}</span>
+                    <span>₦{{ item.get_subtotal }}</span>
+                </div>
+                {% endfor %}
+                <div class="d-flex justify-content-between pt-2 fw-bold">
+                    <span>Total</span>
+                    <span class="text-warning">₦{{ order.total }}</span>
+                </div>
+            </div>
+            <div class="card shadow-sm p-4">
+                <h5 class="fw-bold">Update Order Status</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <select name="status" class="form-select mb-3">
+                        {% for val, label in order.STATUS_CHOICES %}
+                        <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-dark">Update Status</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow-sm p-4 mb-3">
+                <h6 class="fw-bold">Customer</h6>
+                <p>{{ order.customer.get_full_name }} ({{ order.customer.email }})</p>
+                <p class="small">{{ order.delivery_address }}, {{ order.delivery_city }}, {{ order.delivery_state }}</p>
+                <p class="small">📞 {{ order.delivery_phone }}</p>
+            </div>
+            <div class="card shadow-sm p-4">
+                <h6 class="fw-bold">Payment</h6>
+                {% if order.payment %}
+                <p>Status: <strong>{{ order.payment.status }}</strong></p>
+                <p>Ref: {{ order.payment.flutterwave_tx_ref }}</p>
+                <p>OTP Verified: {% if order.otp_verified %}<span class="text-success">Yes</span>{% else %}<span class="text-danger">No</span>{% endif %}</p>
+                {% if order.otp_verified and order.payment.status == 'escrowed' %}
+                <a href="{% url 'payments:release_escrow' order.id %}" class="btn btn-success w-100">Release Escrow to SEKANI</a>
+                {% endif %}
+                {% else %}
+                <p class="text-muted">No payment yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

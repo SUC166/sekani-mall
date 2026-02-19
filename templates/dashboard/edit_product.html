@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Edit Product - SEKANI Dashboard{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Edit Product</h3>
+<div class="card shadow p-4">
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Product Name</label>
+            <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label fw-bold">Price (₦)</label>
+            <input type="number" name="price" class="form-control" value="{{ product.price }}" step="0.01" required>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label fw-bold">Stock</label>
+            <input type="number" name="stock" class="form-control" value="{{ product.stock }}" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Description</label>
+        <textarea name="description" class="form-control" rows="4" required>{{ product.description }}</textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Condition</label>
+            <select name="condition" class="form-select">
+                <option value="new" {% if product.condition == 'new' %}selected{% endif %}>New</option>
+                <option value="fairly_used" {% if product.condition == 'fairly_used' %}selected{% endif %}>Fairly Used</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Status</label>
+            <select name="status" class="form-select">
+                <option value="active" {% if product.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="out_of_stock" {% if product.status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                <option value="archived" {% if product.status == 'archived' %}selected{% endif %}>Archived</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="is_featured" {% if product.is_featured %}checked{% endif %}>
+                <label class="form-check-label fw-bold">Featured Product</label>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Add More Images</label>
+        <input type="file" name="images" class="form-control" multiple accept="image/*">
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Current Images</label>
+        <div class="d-flex gap-2 flex-wrap">
+            {% for img in product.images.all %}
+                <img src="{{ img.image.url }}" style="height:80px;width:80px;object-fit:cover;" class="rounded">
+            {% endfor %}
+        </div>
+    </div>
+    <button class="btn btn-sekani btn-lg">Save Changes</button>
+    <a href="{% url 'dashboard_products' %}" class="btn btn-outline-secondary btn-lg ms-2">Cancel</a>
+</form>
+</div>
+{% endblock %}

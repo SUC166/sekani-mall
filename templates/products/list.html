@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Products - SEKANI Mall{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <!-- Filters -->
+        <div class="col-md-3">
+            <div class="card shadow-sm p-3 mb-4">
+                <h6 class="fw-bold">Filter Products</h6>
+                <form method="get">
+                    <div class="mb-2">
+                        <label class="form-label small">Category</label>
+                        <select name="category" class="form-select form-select-sm">
+                            <option value="">All</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Min Price (₦)</label>
+                        <input type="number" name="min_price" class="form-control form-control-sm" value="{{ request.GET.min_price }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Max Price (₦)</label>
+                        <input type="number" name="max_price" class="form-control form-control-sm" value="{{ request.GET.max_price }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Condition</label>
+                        <select name="condition" class="form-select form-select-sm">
+                            <option value="">All</option>
+                            <option value="new" {% if request.GET.condition == 'new' %}selected{% endif %}>New</option>
+                            <option value="fairly_used" {% if request.GET.condition == 'fairly_used' %}selected{% endif %}>Fairly Used</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark btn-sm w-100">Apply</button>
+                </form>
+            </div>
+        </div>
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            {% if query %}<p class="text-muted">Results for: <strong>{{ query }}</strong></p>{% endif %}
+            <div class="row g-3">
+                {% for product in products %}
+                <div class="col-6 col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" class="card-img-top" style="height:200px;object-fit:cover;" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+                                <i class="bi bi-image text-muted fs-1"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ product.name }}</h6>
+                            <p class="text-warning fw-bold mb-1">₦{{ product.price }}</p>
+                            <span class="badge bg-secondary">{{ product.get_condition_display }}</span>
+                            <div class="mt-2">
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-dark">View</a>
+                                <a href="{% url 'orders:add_to_cart' product.id %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-cart-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <div class="col-12"><p class="text-muted">No products found.</p></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

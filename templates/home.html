@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}SEKANI Mall - Shop with Confidence{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold"><span style="color:#f7c948;">SEKANI</span> Mall</h1>
+        <p class="lead">Shop quality products with secure escrow-protected payments.</p>
+        <a href="{% url 'products:list' %}" class="btn btn-warning btn-lg mt-2">Shop Now</a>
+    </div>
+</div>
+
+<!-- Categories -->
+<div class="container mt-5">
+    <h3 class="fw-bold mb-3">Browse Categories</h3>
+    <div class="row g-3">
+        {% for category in categories %}
+        <div class="col-6 col-md-3">
+            <a href="{{ category.get_absolute_url }}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    {% if category.image %}
+                        <img src="{{ category.image.url }}" class="card-img-top" style="height:120px;object-fit:cover;" alt="{{ category.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ category.name }}</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Featured Products -->
+{% if featured_products %}
+<div class="container mt-5">
+    <h3 class="fw-bold mb-3">⭐ Featured Products</h3>
+    <div class="row g-3">
+        {% for product in featured_products %}
+        <div class="col-6 col-md-3">
+            <div class="card h-100 shadow-sm">
+                {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" class="card-img-top" style="height:200px;object-fit:cover;" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ product.name }}</h6>
+                    <p class="text-warning fw-bold">₦{{ product.price }}</p>
+                    <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-dark">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- New Arrivals -->
+<div class="container mt-5">
+    <h3 class="fw-bold mb-3">🆕 New Arrivals</h3>
+    <div class="row g-3">
+        {% for product in new_arrivals %}
+        <div class="col-6 col-md-3">
+            <div class="card h-100 shadow-sm">
+                {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" class="card-img-top" style="height:200px;object-fit:cover;" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ product.name }}</h6>
+                    <p class="text-warning fw-bold">₦{{ product.price }}</p>
+                    <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-dark">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Trust Badges -->
+<div class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-md-4">
+                <i class="bi bi-shield-check fs-1 text-success"></i>
+                <h5 class="mt-2">Escrow Protected</h5>
+                <p class="small text-muted">Your money is held safely until you confirm delivery.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-truck fs-1 text-primary"></i>
+                <h5 class="mt-2">OTP Delivery</h5>
+                <p class="small text-muted">Funds only release when you confirm receipt with your OTP.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-star-fill fs-1 text-warning"></i>
+                <h5 class="mt-2">Verified Reviews</h5>
+                <p class="small text-muted">Only verified buyers can leave reviews.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Shop - SEKANI Mall{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<div class="p-5 mb-4 rounded-3 text-white" style="background: linear-gradient(135deg, #1a7a4a, #2ecc71);">
+    <div class="container-fluid py-2">
+        <h1 class="display-5 fw-bold">Welcome to SEKANI Mall</h1>
+        <p class="col-md-8 fs-4">Quality products, secure payments, delivered to your door.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Filters -->
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold">Filter Products</h6>
+            <form method="GET">
+                <input type="hidden" name="q" value="{{ query }}">
+                <div class="mb-2">
+                    <label class="form-label small">Category</label>
+                    <select class="form-select form-select-sm" name="category" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Min Price (₦)</label>
+                    <input type="number" class="form-control form-control-sm" name="min_price" value="{{ request.GET.min_price }}">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Max Price (₦)</label>
+                    <input type="number" class="form-control form-control-sm" name="max_price" value="{{ request.GET.max_price }}">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small">Condition</label>
+                    <select class="form-select form-select-sm" name="condition">
+                        <option value="">Any</option>
+                        <option value="new" {% if request.GET.condition == 'new' %}selected{% endif %}>New</option>
+                        <option value="fairly_used" {% if request.GET.condition == 'fairly_used' %}selected{% endif %}>Fairly Used</option>
+                    </select>
+                </div>
+                <button class="btn btn-sekani btn-sm w-100">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="col-md-9">
+        {% if featured and not query %}
+        <h5 class="mb-3 fw-bold">⭐ Featured Products</h5>
+        <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+            {% for product in featured %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" class="card-img-top product-img" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-img bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image fs-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ product.name }}</h6>
+                        <p class="text-success fw-bold">₦{{ product.price|floatformat:2 }}</p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-secondary btn-sm flex-fill">View</a>
+                            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sekani btn-sm flex-fill">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <hr>
+        {% endif %}
+
+        <h5 class="mb-3 fw-bold">{% if query %}Results for "{{ query }}"{% else %}All Products{% endif %}</h5>
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            {% for product in products %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" class="card-img-top product-img" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-img bg-light d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image fs-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-1">{{ product.get_condition_display }}</span>
+                        <h6 class="card-title">{{ product.name }}</h6>
+                        <p class="text-success fw-bold mb-2">₦{{ product.price|floatformat:2 }}</p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-secondary btn-sm flex-fill">View</a>
+                            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sekani btn-sm flex-fill">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search fs-1 text-muted"></i>
+                <p class="text-muted mt-2">No products found.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

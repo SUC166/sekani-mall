@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - SEKANI Mall{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">SEKANI Admin Dashboard</h3>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-success p-3 text-center">
+            <h2 class="fw-bold">{{ total_orders }}</h2><p class="mb-0">Total Orders</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-primary p-3 text-center">
+            <h2 class="fw-bold">{{ pending_orders }}</h2><p class="mb-0">Awaiting Shipment</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info p-3 text-center">
+            <h2 class="fw-bold">{{ total_customers }}</h2><p class="mb-0">Customers</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning p-3 text-center">
+            <h2 class="fw-bold">{{ open_disputes }}</h2><p class="mb-0">Open Disputes</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'add_product' %}" class="btn btn-sekani"><i class="bi bi-plus-circle"></i> Add Product</a>
+            <a href="{% url 'dashboard_products' %}" class="btn btn-outline-secondary">Manage Products</a>
+            <a href="{% url 'dashboard_orders' %}" class="btn btn-outline-secondary">Manage Orders</a>
+            <a href="{% url 'dashboard_disputes' %}" class="btn btn-outline-warning">View Disputes</a>
+            <a href="{% url 'add_discount' %}" class="btn btn-outline-success">Add Discount</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header fw-bold">Recent Orders</div>
+    <div class="table-responsive">
+    <table class="table table-hover mb-0">
+        <thead><tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for order in recent_orders %}
+        <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.customer.get_full_name }}</td>
+            <td>₦{{ order.total|floatformat:2 }}</td>
+            <td><span class="badge {% if order.status == 'delivered' %}bg-success{% elif order.status == 'paid' %}bg-primary{% else %}bg-secondary{% endif %}">{{ order.get_status_display }}</span></td>
+            <td>{{ order.created_at|date:"d M Y" }}</td>
+            <td>
+                <form method="POST" action="{% url 'update_order_status' order.id %}" class="d-flex gap-1">
+                    {% csrf_token %}
+                    <select name="status" class="form-select form-select-sm" style="width:130px;">
+                        <option value="paid" {% if order.status == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                    </select>
+                    <button class="btn btn-sm btn-sekani">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

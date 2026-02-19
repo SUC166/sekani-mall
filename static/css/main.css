@@ -1,0 +1,45 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.card {
+    border-radius: 10px;
+    border: none;
+}
+
+.btn-warning {
+    background-color: #f7c948;
+    border-color: #f7c948;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    background-color: #e6b800;
+    border-color: #e6b800;
+    color: #1a1a1a;
+}
+
+.card-img-top {
+    border-radius: 10px 10px 0 0;
+}
+
+footer {
+    margin-top: 60px;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Product cards hover effect */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}

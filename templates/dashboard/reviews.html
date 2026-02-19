@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Reviews - Dashboard{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <h2 class="fw-bold mb-4">Reviews</h2>
+    {% for review in reviews %}
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <strong>{{ review.customer }}</strong> on <em>{{ review.product.name }}</em>
+                    <span class="text-warning ms-2">{% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</span>
+                </div>
+                <span class="badge {% if review.approved %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                    {% if review.approved %}Approved{% else %}Pending{% endif %}
+                </span>
+            </div>
+            <h6 class="mt-2">{{ review.title }}</h6>
+            <p class="small mb-2">{{ review.body }}</p>
+            {% if not review.approved %}
+            <a href="{% url 'dashboard:approve_review' review.id %}" class="btn btn-sm btn-success">Approve</a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-muted">No reviews yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

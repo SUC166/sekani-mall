@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Cart - SEKANI Mall{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">🛒 Your Cart</h3>
+{% if items %}
+<div class="row">
+<div class="col-md-8">
+    <div class="card">
+        <div class="card-body">
+        {% for item in items %}
+        <div class="d-flex align-items-center border-bottom pb-3 mb-3 gap-3">
+            {% if item.product.images.first %}
+                <img src="{{ item.product.images.first.image.url }}" style="width:80px;height:80px;object-fit:cover;" class="rounded">
+            {% endif %}
+            <div class="flex-grow-1">
+                <h6 class="mb-0">{{ item.product.name }}</h6>
+                <p class="text-muted small mb-0">Qty: {{ item.quantity }}</p>
+            </div>
+            <div class="text-end">
+                <p class="fw-bold text-success mb-1">₦{{ item.subtotal|floatformat:2 }}</p>
+                <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="card p-3">
+        <h5 class="fw-bold">Order Summary</h5>
+        <div id="discount-message" class="mb-2"></div>
+        <div class="mb-3">
+            <input type="text" id="discount-code" class="form-control form-control-sm mb-2" placeholder="Discount code">
+            <button class="btn btn-outline-secondary btn-sm w-100" onclick="applyDiscount()">Apply Code</button>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between">
+            <span>Subtotal</span><span id="subtotal">₦{{ total|floatformat:2 }}</span>
+        </div>
+        <div class="d-flex justify-content-between text-success" id="discount-row" style="display:none!important;">
+            <span>Discount</span><span id="discount-saved">₦0.00</span>
+        </div>
+        <div class="d-flex justify-content-between fw-bold mt-2">
+            <span>Total</span><span id="final-total">₦{{ total|floatformat:2 }}</span>
+        </div>
+        <input type="hidden" id="cart-total" value="{{ total }}">
+        <input type="hidden" id="discount-id" value="">
+        {% if user.is_authenticated %}
+            <a href="{% url 'checkout' %}" class="btn btn-sekani w-100 mt-3">Proceed to Checkout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-sekani w-100 mt-3">Login to Checkout</a>
+        {% endif %}
+    </div>
+</div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-cart-x fs-1 text-muted"></i>
+    <p class="text-muted mt-2">Your cart is empty.</p>
+    <a href="{% url 'product_list' %}" class="btn btn-sekani">Start Shopping</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+function applyDiscount() {
+    const code = document.getElementById('discount-code').value;
+    const total = parseFloat(document.getElementById('cart-total').value);
+    fetch('/discounts/apply/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: JSON.stringify({code: code, cart_total: total})
+    }).then(r => r.json()).then(data => {
+        const msg = document.getElementById('discount-message');
+        if (data.success) {
+            msg.innerHTML = `<div class="alert alert-success p-2 small">${data.message}</div>`;
+            document.getElementById('final-total').textContent = '₦' + data.new_total.toFixed(2);
+            document.getElementById('discount-saved').textContent = '-₦' + data.saved.toFixed(2);
+            document.getElementById('discount-row').style.display = 'flex';
+            document.getElementById('discount-id').value = data.discount_id;
+        } else {
+            msg.innerHTML = `<div class="alert alert-danger p-2 small">${data.message}</div>`;
+        }
+    });
+}
+</script>
+{% endblock %}

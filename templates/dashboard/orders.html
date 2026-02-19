@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Orders - SEKANI Dashboard{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">All Orders</h3>
+<div class="table-responsive">
+<table class="table table-hover">
+    <thead class="table-dark"><tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th><th>Escrow</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+        <td>#{{ order.id }}</td>
+        <td>{{ order.customer.get_full_name }}<br><small class="text-muted">{{ order.delivery_phone }}</small></td>
+        <td>₦{{ order.total|floatformat:2 }}</td>
+        <td><span class="badge {% if order.status == 'delivered' %}bg-success{% elif order.status == 'paid' %}bg-primary{% elif order.status == 'shipped' %}bg-info{% elif order.status == 'disputed' %}bg-warning{% else %}bg-secondary{% endif %}">{{ order.get_status_display }}</span></td>
+        <td>{% if order.escrow_released %}<span class="badge bg-success">Released</span>{% else %}<span class="badge bg-warning text-dark">Held</span>{% endif %}</td>
+        <td>{{ order.created_at|date:"d M Y" }}</td>
+        <td>
+            <form method="POST" action="{% url 'update_order_status' order.id %}" class="d-flex gap-1">
+                {% csrf_token %}
+                <select name="status" class="form-select form-select-sm" style="width:120px;">
+                    <option value="paid" {% if order.status == 'paid' %}selected{% endif %}>Paid</option>
+                    <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                    <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="refunded" {% if order.status == 'refunded' %}selected{% endif %}>Refunded</option>
+                </select>
+                <button class="btn btn-sm btn-sekani">✓</button>
+            </form>
+            {% if order.otp_verified and not order.escrow_released %}
+            <a href="{% url 'release_escrow' order.id %}" class="btn btn-sm btn-success mt-1 w-100">Release Escrow</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

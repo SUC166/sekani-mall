@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Disputes - SEKANI Dashboard{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4">Disputes</h3>
+{% for dispute in disputes %}
+<div class="card mb-3 border-warning">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h6 class="fw-bold">Order #{{ dispute.order.id }} — {{ dispute.raised_by.get_full_name }}</h6>
+            <span class="badge {% if dispute.status == 'open' %}bg-danger{% else %}bg-secondary{% endif %}">{{ dispute.get_status_display }}</span>
+        </div>
+        <p class="mb-2">{{ dispute.reason }}</p>
+        {% if dispute.evidence %}<a href="{{ dispute.evidence.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">View Evidence</a>{% endif %}
+        <p class="small text-muted mt-2">Raised: {{ dispute.created_at|date:"d M Y H:i" }}</p>
+    </div>
+</div>
+{% empty %}
+<div class="text-center py-5 text-muted"><i class="bi bi-shield-check fs-1"></i><p>No disputes. All clear!</p></div>
+{% endfor %}
+{% endblock %}
